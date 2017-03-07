@@ -1,31 +1,52 @@
-QUnit.test("Coffeerun testing", function(assert) {
-    var ds = new App.DataStore();
-    assert.equal(ds.add('m@bond.com', 'tea'));
-    assert.equal(ds.add('james@bond.com', 'eshpressho'));
-    assert.ok(ds.getAll());
-    assert.equal(ds.remove('james@bond.com'));
-    assert.ok(ds.getAll());
-    assert.ok(ds.get('m@bond.com'));
-    assert.ok(ds.get('james@bond.com'));
+var App = window.App || {};
 
+ QUnit.test("DataStore Add", function(assert) {
+     var ds = new App.DataStore();
+     ds.add('m@bond.com', 'tea');
+     ds.add('james@bond.com', 'eshpressho');
+     ds.getAll();
+     assert.ok(ds.getAll(), "Passed!");
+ });
 
+ QUnit.test("DataStore Remove", function(assert) {
+     var ds = new App.DataStore();
+     ds.add('james@bond.com', 'eshpressho');
+     ds.remove('james@bond.com');
+     assert.ok(ds.get('james@bond.com') == undefined, "Passed!");
+ });
 
-    assert.equal(myTruck.createOrder({
-        emailAddress: 'me@goldfinger.com',
-        coffee: 'double mocha'
-    }));
-    assert.equal(myTruck.createOrder({
-        emailAddress: 'dr@no.com',
-        coffee: 'decaf'
-    }));
-    assert.equal(myTruck.createOrder({
-        emailAddress: 'm@bond.com',
-        coffee: 'earl grey'
-    }));
-    assert.ok(myTruck.printOrders());
-    assert.equal(myTruck.deliverOrder('dr@no.com'));
-    assert.equal(myTruck.deliverOrder('m@bond.com'));
-    assert.ok(myTruck.printOrders());
+ QUnit.test("DataStore Get", function(assert) {
+     var ds = new App.DataStore();
+     ds.add('m@bond.com', 'tea');
+     ds.add('james@bond.com', 'eshpressho');
+     assert.ok(ds.get('james@bond.com') == "eshpressho", "Passed!");
+ });
 
+ QUnit.test("Create Orders", function(assert) {
+     window.myTruck.createOrder({
+         emailAddress: 'me@goldfinger.com',
+         coffee: 'double mocha'
+     });
+     var orderInfo = window.myTruck.db.get('me@goldfinger.com');
+     assert.ok(orderInfo.coffee == 'double mocha', "Passed!");
+ });
 
-});
+ QUnit.test("Fill Order", function(assert) {
+     window.myTruck.createOrder({
+         emailAddress: 'me@goldfinger.com',
+         coffee: 'double mocha'
+     });
+     window.myTruck.deliverOrder('me@goldfinger.com');
+     var orderInfo = window.myTruck.db.get('me@goldfinger.com');
+     assert.ok(orderInfo == undefined, "Passed!");
+ })
+
+ QUnit.test("Print Orders", function(assert) {
+     window.myTruck.createOrder({
+         emailAddress: 'me@goldfinger.com',
+         coffee: 'double mocha'
+     });
+     var orders = window.myTruck.printOrders();
+     // Orders are displayed on console
+     assert.ok(true, "Passed!");
+ })
